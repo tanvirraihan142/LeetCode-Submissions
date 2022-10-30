@@ -18,6 +18,7 @@ class Solution:
             cur = max(dfs(node.left, depth+1), dfs(node.right, depth+1)) + 1
             Height[node.val] = cur
             return cur
+        
         dfs(root, 0)
         #cousins are nodes that are in the same depth
         cousins = {}
@@ -33,12 +34,18 @@ class Solution:
             #looking at the cousins of the same depth as the query node q
             depth = Depth[q]
             # print(q, depth)
+            
+            #it means the root
             if len(cousins[depth]) == 1:
                 ans.append(depth-1)
+                
+            # if the top item matches with the query, then use the 2nd top as the answer
             elif cousins[depth][0][1] == q:
                 tmp = heapq.heappop(cousins[depth])
                 ans.append(-cousins[depth][0][0] + depth)
                 heapq.heappush(cousins[depth], tmp)
+                
+            # the usual case, get the top item from the cousins
             else:
                 ans.append(-cousins[depth][0][0] + depth)
         
