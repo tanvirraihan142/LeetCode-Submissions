@@ -18,7 +18,7 @@ class Solution:
             if curr_pos == x:
                 return jumps
             
-            if curr_pos + a not in forbidden_set and (curr_pos + a, False) not in visited and curr_pos + a <= 12000:
+            if curr_pos + a not in forbidden_set and (curr_pos + a, False) not in visited and curr_pos + a <= 5999:
                 visited.add((curr_pos + a, False))
                 queue.append((curr_pos + a, False, jumps + 1))
                 
