@@ -1,40 +1,49 @@
 class Solution:
     def maximumSumQueries(self, nums1: List[int], nums2: List[int], queries: List[List[int]]) -> List[int]:
-        a = nums1
-        b = nums2
-        q = queries
-        n = len(a)
-        m = len(q)
-        r = [-1] * m
-        a_ord = sorted(range(n), key=a.__getitem__)
-        q_ord = sorted(range(m), key=q.__getitem__)
-        a_ord_idx = n - 1
-        b_val = set(b)
-        b_val.update(set(y for x, y in q))
-        b_val = sorted(b_val, reverse=True)
-        b_pos = {v: i for i, v in enumerate(b_val)}
-        fen_sz = len(b_pos)
-        fen = [-1] * (fen_sz + 1)
-        
-        def _get(i):
+        n = len(nums1)
+        vs = []
+        for i in range(n): vs.append((nums1[i], nums2[i]))
+        vs.sort()
+        ys = sorted(list(set(nums2)))
+        nn = len(ys)
+        mx=1
+        while mx<=nn: mx<<=1
+        ix = [-1]*(mx+mx)
+        m = len(queries)
+        r = [-1]*m
+        tq = []
+
+        for i in range(m):
+            tq.append((queries[i][0], queries[i][1], i))
+        tq.sort(reverse=True)
+        j = n-1
+        def setv(s, v):
+            s+=mx
+            ix[s]=max(ix[s], v)
+            s>>=1
+            while s:
+                ix[s]=max(ix[s*2], ix[s*2+1])
+                s>>=1
+        def findm(s):
+            e=mx+mx-1
+            s+=mx
             r = -1
-            while i > 0:
-                r = max(r, fen[i])
-                i -= i & -i
+            while s<=e:
+                if s&1:
+                    r=max(r, ix[s])
+                    s+=1
+                if (e&1)==0:
+                    r=max(r, ix[e])
+                    e-=1
+                s>>=1
+                e>>=1
             return r
-        
-        def _upd(i, v):
-            i += 1
-            while i <= fen_sz:
-                fen[i] = max(fen[i], v)
-                i += i & -i
-                
-        for q_idx in reversed(q_ord):
-            x, y = q[q_idx]
-            while a_ord_idx >= 0 and a[a_ord[a_ord_idx]] >= x:
-                idx = a_ord[a_ord_idx]
-                fen_idx = b_pos[b[idx]]
-                _upd(fen_idx, a[idx] + b[idx])
-                a_ord_idx -= 1
-            r[q_idx] = _get(b_pos[y] + 1)
+            
+        for x, y, i in tq:
+            while j>=0 and vs[j][0]>=x:
+                k = bisect_left(ys, vs[j][1])
+                setv(k, vs[j][1]+vs[j][0])
+                j-=1
+            k = bisect_left(ys, y)
+            r[i] = findm(k)
         return r
