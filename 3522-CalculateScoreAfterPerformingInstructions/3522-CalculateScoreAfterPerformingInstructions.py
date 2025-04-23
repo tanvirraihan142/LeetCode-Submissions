@@ -1,4 +1,4 @@
-# Last updated: 4/19/2025, 11:57:45 PM
+# Last updated: 4/23/2025, 5:41:51 PM
 class Solution:
     def calculateScore(self, instructions: List[str], values: List[int]) -> int:
         n = len(instructions)
